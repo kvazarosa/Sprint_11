@@ -1,4 +1,3 @@
-import pytest
 from methods.auth_methods import register, login
 from helpers import generate_random_email
 from data import VALID_EMAIL, VALID_PASSWORD

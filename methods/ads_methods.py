@@ -3,54 +3,102 @@ from data import BASE_URL
 
 
 def create_ad(token, title, description):
-    """Метод для создания объявления."""
     url = f"{BASE_URL}api/create-listing"
 
-    # Используем разные значения как в успешном запросе
-    data = {
-        'name': title,  # Основное название
-        'category': 'Хобби',  # Категория (работает)
-        'condition': 'Б/У',  # Состояние (работает)
-        'city': 'Екатеринбург',  # Город (работает)
-        'description': description,
-        'price': 2000  # Цена как число (работает)
+    payload = {
+        "name": title,
+        "category": "Авто",
+        "condition": "Новый",
+        "city": "Москва",
+        "description": description,
+        "price": "1500"
     }
+
+    files = []
+    for key, value in payload.items():
+        files.append((key, (None, str(value))))
 
     headers = {
         'Authorization': f'Bearer {token}'
     }
 
-    response = requests.post(url, data=data, headers=headers, verify=False)
+    response = requests.post(
+        url,
+        files=files,
+        headers=headers,
+        verify=False
+    )
     return response
 
 
 def get_ad(token, ad_id):
-    """Метод для получения информации об объявлении."""
     url = f"{BASE_URL}api/offers/{ad_id}"
-    headers = {'Authorization': f'Bearer {token}'}
-    response = requests.get(url, headers=headers, verify=False)
-    return response
-
-
-def update_ad(token, ad_id, title, description=None):
-    """Метод для обновления объявления."""
-    url = f"{BASE_URL}api/update-offer/{ad_id}"
-
-    data = {'title': title}
-    if description:
-        data['description'] = description
 
     headers = {
         'Authorization': f'Bearer {token}'
     }
 
-    response = requests.patch(url, data=data, headers=headers, verify=False)
+    response = requests.get(
+        url,
+        headers=headers,
+        verify=False
+    )
+    return response
+
+
+def update_ad(token, ad_id, title=None, description=None, price=None, category="Авто", condition="Новый",
+              city="Москва"):
+    url = f"{BASE_URL}api/update-offer/{ad_id}"
+
+    payload = {
+        "name": title if title is not None else "",  # или можно получить текущее значение
+        "category": category,
+        "condition": condition,
+        "city": city,
+        "description": description if description is not None else "",
+        "price": str(price) if price is not None else "0"
+    }
+
+    files = []
+    for key, value in payload.items():
+        files.append((key, (None, str(value))))
+
+    headers = {
+        'Authorization': f'Bearer {token}'
+    }
+
+    response = requests.patch(
+        url,
+        files=files,
+        headers=headers,
+        verify=False
+    )
+    return response
+
+
+def register(email, password, name="Test User"):
+    url = f"{BASE_URL}api/auth/register"
+
+    payload = {
+        "email": email,
+        "password": password,
+        "name": name
+    }
+
+    response = requests.post(url, json=payload, verify=False)
     return response
 
 
 def delete_ad(token, ad_id):
-    """Метод для удаления объявления."""
     url = f"{BASE_URL}api/listings/{ad_id}"
-    headers = {'Authorization': f'Bearer {token}'}
-    response = requests.delete(url, headers=headers, verify=False)
+
+    headers = {
+        'Authorization': f'Bearer {token}'
+    }
+
+    response = requests.delete(
+        url,
+        headers=headers,
+        verify=False
+    )
     return response
