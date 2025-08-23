@@ -8,7 +8,7 @@ class TestAuth:
         email = generate_random_email()
         password = "1234567890poiuyt"
         response = register(email, password)
-        assert response.status_code in (200, 201)
+        assert response.status_code == 201
         response_data = response.json()
         assert response_data is not None
         assert "user" in response_data or "access_token" in response_data
@@ -22,7 +22,7 @@ class TestAuth:
     def test_successful_login(self):
         response = login(VALID_EMAIL, VALID_PASSWORD)
 
-        assert response.status_code in (200, 201)
+        assert response.status_code == 201
         response_data = response.json()
         user_data = response_data["user"]
         assert user_data["email"] == VALID_EMAIL

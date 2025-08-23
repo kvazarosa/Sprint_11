@@ -6,7 +6,7 @@ class TestAds:
     def test_create_ad_success(self, auth_token):
         response = create_ad(auth_token, AD_TITLE, AD_DESCRIPTION)
 
-        assert response.status_code in [200, 201]
+        assert response.status_code == 201
 
         response_data = response.json()
         assert "id" in response_data
@@ -18,7 +18,7 @@ class TestAds:
 
     def test_update_ad_success(self, auth_token):
         create_response = create_ad(auth_token, AD_TITLE, AD_DESCRIPTION)
-        assert create_response.status_code in [200, 201]
+        assert create_response.status_code == 201
         ad_id = create_response.json()["id"]
 
         update_response = update_ad(
@@ -40,15 +40,15 @@ class TestAds:
         second_user_password = "password123"
 
         register_response = register(second_user_email, second_user_password)
-        assert register_response.status_code in [200, 201]
+        assert register_response.status_code == 201
 
         from methods.auth_methods import login
         second_user_login = login(second_user_email, second_user_password)
-        assert second_user_login.status_code in [200, 201]
+        assert second_user_login.status_code == 201
         second_user_token = second_user_login.json()["token"]["access_token"]
 
         second_user_ad_response = create_ad(second_user_token, "Чужое объявление", "Описание чужого объявления")
-        assert second_user_ad_response.status_code in [200, 201]
+        assert second_user_ad_response.status_code == 201
         other_user_ad_id = second_user_ad_response.json()["id"]
 
         update_response = update_ad(
@@ -59,11 +59,11 @@ class TestAds:
             price=999
         )
 
-        assert update_response.status_code in [403, 401]
+        assert update_response.status_code == 401
 
     def test_delete_ad_success(self, auth_token):
         create_response = create_ad(auth_token, AD_TITLE, AD_DESCRIPTION)
-        assert create_response.status_code in [200, 201]
+        assert create_response.status_code == 201
         ad_id = create_response.json()["id"]
 
         delete_response = delete_ad(auth_token, ad_id)
